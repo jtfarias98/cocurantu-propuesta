@@ -163,7 +163,7 @@ body.panel-open .hero__scroll{transform:translateX(calc(var(--panel-w) / -2))}
 
 /* ---------- Secciones ---------- */
 section{scroll-margin-top:60px}
-.intro{max-width:880px;margin:0 auto;padding:clamp(90px,12vw,160px) var(--gutter) 40px;text-align:center}
+.intro{max-width:1120px;margin:0 auto;padding:clamp(90px,12vw,160px) var(--gutter) 40px;text-align:center}
 .intro__text{max-width:640px;margin:0 auto;color:var(--muted);font-size:18px}
 
 .stats{max-width:var(--max);margin:0 auto;padding:40px var(--gutter) clamp(80px,10vw,130px);display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
@@ -425,3 +425,7 @@ section{scroll-margin-top:60px}
   .header.is-solid .brand__logo{height:44px}
   .services__cta{margin-left:0}
 }
+/* Frases que deben quedar en una sola línea en escritorio (en celular se ajustan) */
+@media (min-width:721px){.line{white-space:nowrap}}
+/* Sin palabras sueltas: títulos y textos cortos reparten sus líneas parejas */
+h1,h2,h3,.eyebrow,.stat__l,.section-head__text,.hero__lead,.room__meta,.quote p,.intro__text{text-wrap:balance}
