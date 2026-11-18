@@ -8,8 +8,8 @@
   /* ---------- MODO DEMO ----------
      true  = versión de prueba para la propuesta: solo abren/cierran Menú y Reservar, nada más funciona.
      false = versión final: todos los botones funcionan y Reservar lleva al motor del cliente (ENGINE). */
-  // En localhost (presentación en persona) todo funciona; en GitHub Pages queda en modo demo.
-  const DEMO = !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  // En localhost o con ?completa en la URL (presentación en persona) todo funciona; si no, queda en modo demo.
+  const DEMO = !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && !new URLSearchParams(location.search).has('completa');
 
   /* ---------- Demo: solo funcionan Menú y Reservar (abrir y cerrar paneles) ---------- */
   // El panel de reservas funciona completo (con disponibilidad y pago simulados) para mostrar la reserva directa
