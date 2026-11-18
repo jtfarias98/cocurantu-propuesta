@@ -23,7 +23,7 @@
       imagesrcset="img/hero-800.webp 800w, img/hero-1600.webp 1600w"
       imagesizes="100vw" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 
 <script type="application/ld+json">
 {
@@ -107,9 +107,14 @@
 <aside class="panel book" id="reservas" aria-hidden="true" role="dialog" aria-labelledby="book-title">
   <button class="panel__close" data-close-panel aria-label="Cerrar reservas"><span>Cerrar</span><i></i></button>
   <div class="panel__body">
-    <p class="eyebrow">Reservas y cotizaciones</p>
+    <p class="eyebrow">Reserva en línea</p>
     <h2 class="book__title" id="book-title">Reserva directo, <em>con la mejor tarifa</em></h2>
 
+    <ol class="bsteps" aria-label="Pasos de la reserva">
+      <li class="is-on">Fechas</li><li>Habitación</li><li>Datos</li><li>Pago</li>
+    </ol>
+
+    <div class="bview is-on" data-view="1">
     <form class="bform" data-booking>
       <div class="bform__row">
         <label class="field"><span>Llegada</span><input type="date" name="in" required></label>
@@ -143,10 +148,53 @@
         <span data-nights>Selecciona tus fechas</span>
       </div>
       <button class="btn btn--solid btn--block" type="submit">Ver disponibilidad y precios</button>
-      <p class="bform__note">Versión de prueba: la reserva se conecta en la versión final.</p>
+      <p class="bform__note">Reserva y paga en línea: sin esperar respuesta por correo.</p>
     </form>
+    </div>
 
-    <ul class="perks">
+    <!-- Paso 2: habitaciones disponibles con el total de la estadía -->
+    <div class="bview" data-view="2">
+      <button type="button" class="bback" data-back="1">← Cambiar fechas</button>
+      <p class="bstay" data-stay></p>
+      <div class="brooms" data-rooms></div>
+      <p class="bform__note">Tarifas temporada baja 2026 por noche, con desayuno. Menores de 2 años no pagan.</p>
+    </div>
+
+    <!-- Paso 3: datos del huésped -->
+    <div class="bview" data-view="3">
+      <button type="button" class="bback" data-back="2">← Cambiar habitación</button>
+      <div class="bsum" data-sum></div>
+      <form class="bform bform--guest" data-guest>
+        <label class="field"><span>Nombre y apellido</span><input name="name" autocomplete="name" required></label>
+        <div class="bform__row">
+          <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required></label>
+          <label class="field"><span>Teléfono</span><input type="tel" name="phone" autocomplete="tel" placeholder="+56 9…"></label>
+        </div>
+        <label class="field"><span>País de residencia</span>
+          <select name="country"><option>Chile</option><option>Argentina</option><option>Brasil</option><option>Estados Unidos</option><option>Otro</option></select>
+        </label>
+        <p class="bform__note bform__note--left" data-iva hidden>Turistas extranjeros pagando en USD: exentos de IVA.</p>
+        <label class="bcheck"><input type="checkbox" name="terms" required><span>Acepto las políticas del hotel y de cancelación.</span></label>
+        <button class="btn btn--solid btn--block" type="submit" data-pay>Pagar con Webpay</button>
+        <p class="bform__note">Pago seguro con Webpay Plus · tarjeta de crédito o débito.</p>
+      </form>
+    </div>
+
+    <!-- Paso 4: confirmación -->
+    <div class="bview" data-view="4">
+      <div class="bpaying" data-paying><i></i><p>Procesando el pago con Webpay…</p></div>
+      <div class="bdone" data-done hidden>
+        <p class="bdone__check" aria-hidden="true">✓</p>
+        <h3 class="bdone__title">¡Reserva <em>confirmada!</em></h3>
+        <p class="bdone__code" data-code></p>
+        <div class="bsum" data-sum2></div>
+        <p class="bform__note bform__note--left" data-mail></p>
+        <button type="button" class="btn btn--block" data-back="1">Hacer otra reserva</button>
+        <p class="bform__note">Demo: disponibilidad y pago simulados. En la versión final se conectan al sistema de reservas del hotel.</p>
+      </div>
+    </div>
+
+    <ul class="perks" data-perks>
       <li><strong>Mejor tarifa reservando directo</strong>, con IVA incluido.</li>
       <li><strong>Desayuno buffet o personalizado</strong>, con productos naturales y saludables.</li>
       <li><strong>Solicitudes de pre-llegada:</strong> flores, chocolates, espumante, hot tub a la hora o transfer.</li>
@@ -533,6 +581,6 @@
   <button class="lightbox__nav lightbox__next" data-lb-next aria-label="Siguiente">›</button>
 </div>
 
-<script src="main.js?v=1" defer></script>
+<script src="main.js?v=2" defer></script>
 </body>
 </html>

@@ -11,7 +11,8 @@
   const DEMO = true;
 
   /* ---------- Demo: solo funcionan Menú y Reservar (abrir y cerrar paneles) ---------- */
-  const ALLOWED = '#burger, .header__book, [data-close-panel], #veil';
+  // El panel de reservas funciona completo (con disponibilidad y pago simulados) para mostrar la reserva directa
+  const ALLOWED = '#burger, .header__book, [data-close-panel], #veil, #reservas, a[href="#reservas"]';
   const INTERACTIVE = 'a, button, input, select, textarea, label, summary, [role="button"], [data-full], [data-filter], [data-i], #masonry figure, .carousel, [tabindex]';
   const block = e => {
     const el = e.target.closest && e.target.closest(INTERACTIVE);
@@ -256,6 +257,95 @@
   const today = new Date(); today.setHours(12);
   const plus = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 
+  /* ---------- Reserva directa (demo): habitaciones → datos → pago → confirmación ----------
+     Tarifas reales del sitio actual (temporada baja 2026, 1 mar – 20 dic). Disponibilidad y pago simulados:
+     en la versión final vienen del motor de reservas que contrate el hotel. */
+  const RATES = {
+    CLP: { Standard: 120000, Executive: 127000, Deluxe: 136000, extra: 55000 },
+    USD: { Standard: 109, Executive: 115, Deluxe: 124, extra: 48 }
+  };
+  const ROOMS = [
+    { id: 'Standard', img: 'img/hab-standard-800.webp', meta: 'Super King o twin', max: 2 },
+    { id: 'Executive', img: 'img/hab-executive-800.webp', meta: 'Semi suite · más espacio y luz', max: 3 },
+    { id: 'Deluxe', img: 'img/hab-deluxe-800.webp', meta: 'La más amplia · admite cama adicional', max: 3 }
+  ];
+  const bookPanel = $('#reservas');
+  const bk = {};
+  const money = (v, cur) => cur === 'USD' ? `US$${v.toLocaleString('en-US')}` : `$${v.toLocaleString('es-CL')}`;
+  const longDate = s => new Date(s + 'T12:00').toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' });
+  const goStep = n => {
+    $$('.bview', bookPanel).forEach(v => v.classList.toggle('is-on', +v.dataset.view === n));
+    $$('.bsteps li', bookPanel).forEach((li, i) => { li.classList.toggle('is-on', i === n - 1); li.classList.toggle('is-done', i < n - 1); });
+    $('[data-perks]', bookPanel).hidden = n > 1;
+    bookPanel.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  };
+  const sumHTML = () => `
+    <p><strong>${bk.room}</strong>${bk.extra ? ' + cama adicional' : ''} · desayuno incluido</p>
+    <p>${longDate(bk.in)} → ${longDate(bk.out)} · ${bk.n} ${bk.n === 1 ? 'noche' : 'noches'} · ${bk.guests}</p>
+    <p class="bsum__total"><span>Total</span><strong>${money(bk.total, bk.cur)}</strong></p>`;
+
+  function showRooms() {
+    const f = $('form[data-booking]', bookPanel).elements;
+    const a = +f.adults.value, c = +f.children.value, people = a + c;
+    Object.assign(bk, {
+      in: f.in.value, out: f.out.value, cur: f.currency.value,
+      n: Math.round((new Date(f.out.value) - new Date(f.in.value)) / 864e5),
+      guests: `${a} ${a === 1 ? 'adulto' : 'adultos'}${c ? ` y ${c} ${c === 1 ? 'niño' : 'niños'}` : ''}`
+    });
+    const r = RATES[bk.cur], pick = f.room.value;
+    $('[data-stay]', bookPanel).textContent = `${longDate(bk.in)} → ${longDate(bk.out)} · ${bk.n} ${bk.n === 1 ? 'noche' : 'noches'} · ${bk.guests}`;
+    $('[data-rooms]', bookPanel).innerHTML = ROOMS.map(room => {
+      const fits = people <= room.max, extra = people > 2;
+      const night = r[room.id] + (extra ? r.extra : 0), total = night * bk.n;
+      return `<article class="broom${room.id === pick ? ' is-pick' : ''}${fits ? '' : ' is-off'}">
+        <img src="${room.img}" alt="" loading="lazy" width="600" height="400">
+        <div class="broom__body">
+          <h3>${room.id}</h3>
+          <p class="broom__meta">${room.meta}</p>
+          ${fits
+            ? `<p class="broom__price"><strong>${money(total, bk.cur)}</strong> <span>${bk.n} ${bk.n === 1 ? 'noche' : 'noches'} · ${money(night, bk.cur)} por noche${extra ? ' con cama adicional' : ''}</span></p>
+               <button type="button" class="btn btn--solid" data-choose="${room.id}" data-total="${total}" data-extra="${extra ? 1 : ''}">Elegir</button>`
+            : `<p class="broom__price"><span>Máximo 2 personas</span></p>`}
+        </div>
+      </article>`;
+    }).join('') + (bk.out > '2026-12-20' ? '<p class="bform__note bform__note--left">Desde el 21 de diciembre rige la temporada alta: en la versión final cada fecha muestra su tarifa real.</p>' : '') + (people > 3 ? '<p class="bform__note bform__note--left">Para más de 3 personas, elige dos habitaciones o escríbenos por WhatsApp.</p>' : '');
+    goStep(2);
+  }
+
+  if (bookPanel) {
+    bookPanel.addEventListener('click', e => {
+      const ch = e.target.closest('[data-choose]');
+      if (ch) {
+        Object.assign(bk, { room: ch.dataset.choose, total: +ch.dataset.total, extra: !!ch.dataset.extra });
+        $('[data-sum]', bookPanel).innerHTML = sumHTML();
+        $('[data-pay]', bookPanel).textContent = `Pagar ${money(bk.total, bk.cur)} con Webpay`;
+        goStep(3);
+        return;
+      }
+      const back = e.target.closest('[data-back]');
+      if (back) goStep(+back.dataset.back);
+    });
+    const guest = $('form[data-guest]', bookPanel);
+    const ivaNote = () => { $('[data-iva]', bookPanel).hidden = !(bk.cur === 'USD' && guest.elements.country.value !== 'Chile'); };
+    guest.addEventListener('change', ivaNote);
+    guest.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!guest.reportValidity()) return;
+      $('[data-paying]', bookPanel).hidden = false;
+      $('[data-done]', bookPanel).hidden = true;
+      goStep(4);
+      setTimeout(() => {
+        $('[data-paying]', bookPanel).hidden = true;
+        $('[data-done]', bookPanel).hidden = false;
+        $('[data-code]', bookPanel).textContent = 'Código de reserva CCR-' + Math.floor(10000 + Math.random() * 89999);
+        $('[data-sum2]', bookPanel).innerHTML = sumHTML();
+        $('[data-mail]', bookPanel).textContent = `Te enviamos la confirmación a ${guest.elements.email.value}. El hotel recibe la reserva al instante, sin responder correos.`;
+      }, 1600);
+    });
+    // al abrir de nuevo el panel desde fuera, parte en el paso 1
+    $$('a[href="#reservas"]').forEach(a => a.addEventListener('click', () => { if ($('[data-view="4"]', bookPanel).classList.contains('is-on')) goStep(1); }));
+  }
+
   $$('form[data-booking]').forEach(form => {
     const fin = form.elements.in, fout = form.elements.out;
     fin.min = iso(today); fin.value = iso(plus(today, 14));
@@ -287,7 +377,7 @@
         if (summary) { summary.parentElement.classList.add('is-error'); summary.textContent = 'La salida debe ser posterior a la llegada'; }
         return;
       }
-      if (DEMO) return; // demo: sin conexión al motor de reservas
+      if (DEMO) { showRooms(); return; } // demo: flujo de reserva directa simulado
       // Versión final: hoy el hotel cotiza por correo/WhatsApp. Si se conecta un motor de reservas,
       // se reemplaza ENGINE por su URL y los nombres de parámetros que indique el proveedor.
       const ENGINE = 'https://wa.me/56992900566';
