@@ -472,3 +472,15 @@ h1,h2,h3,.eyebrow,.stat__l,.section-head__text,.hero__lead,.room__meta,.quote p,
 .bdone__code{margin:0;font:500 12px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--brand-deep)}
 @media (max-width:420px){.broom{grid-template-columns:88px minmax(0,1fr);gap:12px}.broom img{width:88px;min-height:96px}}
 @media (max-width:420px){.bsteps li{letter-spacing:.06em;font-size:9.5px}}
+
+/* ---------- Políticas / privacidad (dialog) y aviso flotante ---------- */
+.dlg{border:0;padding:44px clamp(24px,4vw,48px) 36px;max-width:min(560px,calc(100vw - 32px));background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(20,12,8,.25)}
+.dlg::backdrop{background:rgba(20,14,10,.55);backdrop-filter:blur(2px)}
+.dlg[open]{animation:bin .6s var(--ease)}
+.dlg h2{margin:6px 0 14px;font:400 34px/1.1 var(--serif)}
+.dlg p{color:var(--muted);line-height:1.6}
+.dlg .perks{margin-top:8px;padding-top:18px}
+.dlg__x{position:absolute;top:12px;right:16px;background:none;border:0;font:300 30px/1 var(--sans);color:var(--muted);cursor:pointer}
+.dlg__x:hover{color:var(--brand)}
+.toast{position:fixed;left:50%;bottom:28px;z-index:90;transform:translate(-50%,20px);opacity:0;background:var(--brand-deep);color:#fff;padding:14px 22px;font-size:14px;max-width:calc(100vw - 32px);text-align:center;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}

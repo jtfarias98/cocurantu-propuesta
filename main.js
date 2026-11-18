@@ -8,7 +8,8 @@
   /* ---------- MODO DEMO ----------
      true  = versión de prueba para la propuesta: solo abren/cierran Menú y Reservar, nada más funciona.
      false = versión final: todos los botones funcionan y Reservar lleva al motor del cliente (ENGINE). */
-  const DEMO = true;
+  // En localhost (presentación en persona) todo funciona; en GitHub Pages queda en modo demo.
+  const DEMO = !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 
   /* ---------- Demo: solo funcionan Menú y Reservar (abrir y cerrar paneles) ---------- */
   // El panel de reservas funciona completo (con disponibilidad y pago simulados) para mostrar la reserva directa
@@ -20,6 +21,7 @@
     e.preventDefault();
     e.stopImmediatePropagation();
   };
+  if (!DEMO) document.querySelector('.demo-tag')?.remove();
   if (DEMO) ['click', 'mousedown', 'keydown', 'submit'].forEach(t => addEventListener(t, e => {
     if (t === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
     block(e);
@@ -269,7 +271,23 @@
     { id: 'Executive', img: 'img/hab-executive-800.webp', meta: 'Semi suite · más espacio y luz', max: 3 },
     { id: 'Deluxe', img: 'img/hab-deluxe-800.webp', meta: 'La más amplia · admite cama adicional', max: 3 }
   ];
+  const ENGINE_READY = false; // true cuando se conecte el motor de reservas contratado
   const bookPanel = $('#reservas');
+
+  /* ---------- Políticas, privacidad y avisos ---------- */
+  document.addEventListener('click', e => {
+    const d = e.target.closest('[data-dialog]');
+    if (d) { e.preventDefault(); $('#dlg-' + d.dataset.dialog)?.showModal(); return; }
+    if (e.target.closest('[data-dialog-close]') || e.target.matches('dialog.dlg')) { e.target.closest('dialog').close(); return; }
+    const t = e.target.closest('[data-toast]');
+    if (t) {
+      e.preventDefault();
+      const box = $('.toast');
+      box.textContent = t.dataset.toast; box.hidden = false;
+      requestAnimationFrame(() => box.classList.add('is-on'));
+      clearTimeout(box._t); box._t = setTimeout(() => { box.classList.remove('is-on'); setTimeout(() => box.hidden = true, 500); }, 3200);
+    }
+  });
   const bk = {};
   const money = (v, cur) => cur === 'USD' ? `US$${v.toLocaleString('en-US')}` : `$${v.toLocaleString('es-CL')}`;
   const longDate = s => new Date(s + 'T12:00').toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' });
@@ -377,7 +395,8 @@
         if (summary) { summary.parentElement.classList.add('is-error'); summary.textContent = 'La salida debe ser posterior a la llegada'; }
         return;
       }
-      if (DEMO) { showRooms(); return; } // demo: flujo de reserva directa simulado
+      // Mientras el hotel no tenga motor de reservas, se muestra el flujo de reserva directa (simulado).
+      if (DEMO || !ENGINE_READY) { showRooms(); return; }
       // Versión final: hoy el hotel cotiza por correo/WhatsApp. Si se conecta un motor de reservas,
       // se reemplaza ENGINE por su URL y los nombres de parámetros que indique el proveedor.
       const ENGINE = 'https://wa.me/56992900566';

@@ -23,7 +23,7 @@
       imagesrcset="img/hero-800.webp 800w, img/hero-1600.webp 1600w"
       imagesizes="100vw" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 
 <script type="application/ld+json">
 {
@@ -95,10 +95,10 @@
       <p class="menu__contact">
         <a href="https://wa.me/56992900566">+56 9 9290 0566</a>
         <a href="mailto:reservas@cocurantu.cl">reservas@cocurantu.cl</a>
-        <a href="#">Check-in online</a>
-        <a href="#">Pago Webpay</a>
+        <a href="https://www.cocurantu.cl/hotel/checkin/checkin.shtml" target="_blank" rel="noopener">Check-in online</a>
+        <a href="https://www.cocurantu.com/hotel/pago_online/" target="_blank" rel="noopener">Pago Webpay</a>
       </p>
-      <p class="menu__lang"><a href="#" aria-current="true">ES</a> · <a href="#">EN</a></p>
+      <p class="menu__lang"><a href="#" aria-current="true">ES</a> · <a href="#" data-toast="La versión en inglés viene incluida en el plan completo.">EN</a></p>
     </div>
   </div>
 </nav>
@@ -557,12 +557,12 @@
     <span class="brand__sub">Hotel boutique familiar · Colo Colo 103, Pucón</span>
   </div>
   <nav class="footer__nav">
-    <a href="#habitaciones">Habitaciones</a><a href="#tarifas">Tarifas</a><a href="#sala-reuniones">Sala de reuniones</a><a href="#servicios">Servicios</a><a href="#galeria">Galería</a><a href="#ubicacion">Ubicación</a><a href="#">Check-in online</a><a href="#">Pago Webpay</a>
+    <a href="#habitaciones">Habitaciones</a><a href="#tarifas">Tarifas</a><a href="#sala-reuniones">Sala de reuniones</a><a href="#servicios">Servicios</a><a href="#galeria">Galería</a><a href="#ubicacion">Ubicación</a><a href="https://www.cocurantu.cl/hotel/checkin/checkin.shtml" target="_blank" rel="noopener">Check-in online</a><a href="https://www.cocurantu.com/hotel/pago_online/" target="_blank" rel="noopener">Pago Webpay</a>
   </nav>
   <nav class="footer__social">
     <a href="https://www.instagram.com/cocurantuhotelboutique/" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/cocurantuhotelboutique" target="_blank" rel="noopener">Facebook</a><a href="https://www.tripadvisor.cl/Hotel_Review-g294297-d7377831" target="_blank" rel="noopener">Tripadvisor</a>
   </nav>
-  <p class="footer__legal">© 2026 Cocurantu Hotel Boutique · <a href="#">Políticas del hotel</a> · <a href="#">Privacidad</a></p>
+  <p class="footer__legal">© 2026 Cocurantu Hotel Boutique · <a href="#" data-dialog="politicas">Políticas del hotel</a> · <a href="#" data-dialog="privacidad">Privacidad</a></p>
 </footer>
 
 <!-- Aviso: versión de prueba de la propuesta -->
@@ -581,6 +581,29 @@
   <button class="lightbox__nav lightbox__next" data-lb-next aria-label="Siguiente">›</button>
 </div>
 
-<script src="main.js?v=2" defer></script>
+
+<!-- ============ POLÍTICAS Y PRIVACIDAD ============ -->
+<dialog class="dlg" id="dlg-politicas" aria-labelledby="dlg-pol-t">
+  <button class="dlg__x" data-dialog-close aria-label="Cerrar">×</button>
+  <p class="eyebrow">Cocurantu Hotel Boutique</p>
+  <h2 id="dlg-pol-t">Políticas del hotel</h2>
+  <ul class="perks">
+    <li><strong>Tarifas</strong> en base a dos personas, con desayuno incluido. Menores de 2 años no pagan.</li>
+    <li><strong>Turistas extranjeros</strong> pagando en USD: exentos de IVA.</li>
+    <li><strong>Feriados, fines de semana largos y eventos:</strong> la tarifa puede variar.</li>
+    <li><strong>Horarios de check-in y check-out, cancelación, niños y mascotas:</strong> se completan con el hotel.</li>
+  </ul>
+</dialog>
+<dialog class="dlg" id="dlg-privacidad" aria-labelledby="dlg-pri-t">
+  <button class="dlg__x" data-dialog-close aria-label="Cerrar">×</button>
+  <p class="eyebrow">Ley 21.719 de protección de datos personales</p>
+  <h2 id="dlg-pri-t">Privacidad</h2>
+  <p>Usamos tus datos (nombre, contacto y, en el check-in, documento de identidad) solo para gestionar tu reserva y tu estadía, y cumplir con las obligaciones legales del hotel. No los vendemos ni los compartimos con terceros fuera de los necesarios para procesar el pago.</p>
+  <p>Puedes pedir acceder, corregir o eliminar tus datos escribiendo a <a href="mailto:reservas@cocurantu.cl">reservas@cocurantu.cl</a>.</p>
+  <p class="bform__note bform__note--left">Borrador de propuesta: el texto final se revisa con el hotel.</p>
+</dialog>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="main.js?v=3" defer></script>
 </body>
 </html>
